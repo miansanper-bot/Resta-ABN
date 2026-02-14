@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaltoMates ABN - Galura y Santana</title>
+    <style>
+        :root {
+            --centena: #f1c40f; /* Amarillo ABN */
+            --decena: #EB5757;  /* Rojo ABN */
+            --unidad: #2D9CDB;  /* Azul ABN */
+            --prof: #2c3e50;
+            --bg: #f4f7f6;
+            --desp: #9b59b6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* --- MENÚ Y CONTROLES --- */
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .num-set {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            width: 70px;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-main {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: transform 0.1s;
+        }
+
+        .btn-main:active { transform: scale(0.95); }
+
+        /* --- PESTAÑAS --- */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab {
+            padding: 12px 24px;
+            background: #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .tab.active { background: var(--prof); color: white; }
+
+        /* --- VISTAS --- */
+        .view-section { display: none; width: 100%; max-width: 1000px; }
+        .view-section.active { display: block; }
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            border: 3px solid #eee;
+            min-height: 350px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* --- MESA: MATERIAL GRÁFICO --- */
+        .blocks-area {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 8px;
+            min-height: 220px;
+            border: 2px dashed #ccc;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .b-100 { /* Centena */
+            width: 70px; height: 70px;
+            background-color: var(--centena);
+            border: 2px solid #d4ac0d;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: bold; cursor: pointer;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .b-10 { /* Decena */
+            width: 16px; height: 70px;
+            background-color: var(--decena);
+            border: 2px solid #c0392b;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .b-1 { /* Unidad */
+            width: 20px; height: 20px;
+            background-color: var(--unidad);
+            border: 2px solid #1b70a0;
+            border-radius: 4px; cursor: pointer;
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+        }
+
+        /* --- REJILLA Y NUMPAD --- */
+        .abn-grid { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .abn-grid th { background: var(--prof); color: white; padding: 12px; }
+        .abn-grid td { border: 1px solid #ccc; height: 50px; text-align: center; }
+        .abn-input { width: 85%; font-size: 1.3rem; text-align: center; border: 2px solid transparent; background: #f9f9f9; border-radius: 4px; }
+        .abn-input.active { border-color: var(--unidad); background: #fff; box-shadow: 0 0 8px rgba(45,156,219,0.3); }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: #444;
+            padding: 15px;
+            border-radius: 15px;
+            width: 200px;
+            height: fit-content;
+        }
+        .key {
+            background: #666; color: white; border: none; padding: 15px;
+            font-size: 1.2rem; border-radius: 8px; cursor: pointer;
+        }
+        .key:active { background: #888; }
+
+        /* --- MENSAJES Y PIE --- */
+        .msg-box { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin: 15px 0; display: none; }
+        .is-error { background: #ffdada; color: #a30000; border: 1px solid #ffbaba; }
+        .is-success { background: #d4ffd4; color: #006b00; border: 1px solid #b8ebb8; }
+        
+        .footer { margin-top: auto; padding: 25px; color: #777; font-size: 0.85rem; text-align: center; width: 100%; border-top: 1px solid #ddd; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="controls">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <input type="number" id="inpMin" class="num-set" value="125">
+            <span style="font-size:1.5rem; font-weight:bold;">−</span>
+            <input type="number" id="inpSub" class="num-set" value="48">
+        </div>
+
+        <button class="btn-main" style="background:#27AE60;" onclick="initGame()">🚀 Iniciar</button>
+        <button class="btn-main" style="background:#9b59b6;" onclick="randomize()">🎲 Azar</button>
+        <button class="btn-main" style="background:var(--prof); color:gold;" onclick="askProfesor()">👨‍🏫 PROFE</button>
+        
+        <label style="cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:5px;">
+            <input type="checkbox" id="chkManual" onchange="refreshView()"> ✍️ Reto Mental
+        </label>
+    </div>
+
+    <div id="prof-bubble" style="display:none; background:white; border-left: 5px solid gold; padding:15px; border-radius:8px; margin-bottom:15px; width:90%; max-width:600px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <span id="prof-text" style="font-size:1.1rem; color:#333;"></span>
+    </div>
+
+    <div class="tabs">
+        <div id="t0" class="tab active" onclick="showTab(0, 'Mesa')">1. Mesa</div>
+        <div id="t1" class="tab" onclick="showTab(1, 'Rana')">2. Rana</div>
+        <div id="t2" class="tab" onclick="showTab(2, 'ABN')">3. Rejilla</div>
+        <div id="t3" class="tab" onclick="showTab(3, 'Desp')">4. Resta Desp.</div>
+    </div>
+
+    <div id="view-0" class="view-section active">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <div class="panel">
+                <h3 style="color:var(--prof)">📦 TENGO: <span id="val-left">0</span></h3>
+                <div id="zone-left" class="blocks-area"></div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-main" style="background:#7f8c8d" onclick="breakBlock('c')">🔨 Romper 100</button>
+                    <button class="btn-main" style="background:#7f8c8d" onclick="breakBlock('d')">🔨 Romper 10</button>
+                </div>
+            </div>
+            <div class="panel">
+                <h3 style="color:var(--prof)">🎯 OBJETIVO: <span id="goal-right">0</span></h3>
+                <div id="zone-right" class="blocks-area"></div>
+                <div id="msg-mesa" class="msg-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-1" class="view-section">
+        <div class="panel">
+            <svg id="svgLine" width="800" height="280" style="width:100%; background:#fff; border-radius:10px;"></svg>
+            <div id="msg-frog" class="msg-box"></div>
+            <div id="frog-controls" style="display:flex; justify-content:center; align-items:center; gap:15px; margin-top:15px; min-height:80px;">
+                </div>
+        </div>
+    </div>
+
+    <div id="view-2" class="view-section">
+        <div style="display:flex; gap:25px; justify-content:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:320px;">
+                <table class="abn-grid">
+                    <thead><tr><th>QUITO</th><th>FALTA</th><th>QUEDA</th></tr></thead>
+                    <tbody id="abn-body"></tbody>
+                </table>
+                <div id="msg-abn" class="msg-box"></div>
+            </div>
+            <div class="numpad">
+                <button class="key" onclick="kp(1)">1</button><button class="key" onclick="kp(2)">2</button><button class="key" onclick="kp(3)">3</button>
+                <button class="key" onclick="kp(4)">4</button><button class="key" onclick="kp(5)">5</button><button class="key" onclick="kp(6)">6</button>
+                <button class="key" onclick="kp(7)">7</button><button class="key" onclick="kp(8)">8</button><button class="key" onclick="kp(9)">9</button>
+                <button class="key" onclick="kp('del')" style="background:#e74c3c">⌫</button>
+                <button class="key" onclick="kp(0)">0</button>
+                <button class="key" onclick="kp('ok')" style="background:#27AE60">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-3" class="view-section">
+        <div class="panel" style="border-color: var(--desp);">
+            <h3 style="color:var(--desp); text-align:center;">Resta por Descomposición ABN</h3>
+            <div id="desc-content" style="display:flex; flex-direction:column; gap:10px; align-items:center; margin-top:20px;"></div>
+            <div id="msg-desc" class="msg-box"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        GALURA y Santana. Todos los derechos reservados
+    </div>
+
+    <script src="main.js"></script>
+    <script src="mesa.js"></script>
+    <script src="rana.js"></script>
+    <script src="rejilla.js"></script>
+    <script src="descomposicion.js"></script>
+
+</body>
+</html>
