@@ -67,8 +67,7 @@ function createRow(num, prefijo, conSigno) {
     const fragment = document.createDocumentFragment();
     const dNum = document.createElement('div');
     dNum.style.fontWeight = 'bold';
-    dNum.innerHTML = conSigno ? `<span style="color:#e74c3c">−</span> ${num}` : num;
-    fragment.appendChild(dNum);
+    dNum.innerHTML = conSigno ? `<span style="color:#e74c3c">&#8722;</span> ${num}` : num;    fragment.appendChild(dNum);
 
     const dIgual = document.createElement('div');
     dIgual.innerText = '=';
