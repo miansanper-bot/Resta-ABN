@@ -11,7 +11,8 @@ function renderDescomposicion() {
 
     const tabla = document.createElement('div');
     tabla.className = 'tabla-desc';
-    tabla.style.cssText = "display: inline-grid; grid-template-columns: auto auto 1fr; gap: 15px; align-items: center; font-size: 1.8rem;";
+    // CAMBIO: gap reducido y ancho máximo para que no desborde
+    tabla.style.cssText = "display: inline-grid; grid-template-columns: auto auto 1fr; gap: 8px; align-items: center; font-size: 1.5rem; width: 100%; max-width: 500px;";
 
     tabla.appendChild(createRow(MIN, 'f1', false));
     tabla.appendChild(createRow(SUB, 'f2', true));
@@ -63,7 +64,7 @@ function createRow(num, prefijo, conSigno) {
     fragment.appendChild(dIgual);
 
     const dInputs = document.createElement('div');
-    dInputs.style.display = 'flex'; dInputs.style.gap = '8px'; dInputs.style.alignItems = 'center';
+    dInputs.style.display = 'flex'; dInputs.style.gap = '5px'; dInputs.style.alignItems = 'center';
 
     if (MIN >= 100) {
         dInputs.appendChild(createInput(`${prefijo}c`, 'var(--centena)'));
@@ -90,7 +91,7 @@ function createResultRow() {
     fragment.appendChild(createSymbol('='));
 
     const dInputs = document.createElement('div');
-    dInputs.style.cssText = "display:flex; gap:8px; align-items:center;";
+    dInputs.style.cssText = "display:flex; gap:5px; align-items:center;";
     if (MIN >= 100) {
         dInputs.appendChild(createInput('frc', 'var(--centena)'));
         dInputs.appendChild(createSymbol('+'));
@@ -104,7 +105,8 @@ function createResultRow() {
     dInputs.appendChild(createSymbol('='));
     const finalInp = createInput('f-total', '#333');
     finalInp.style.borderColor = "var(--desp)";
-    finalInp.style.width = "100px";
+    finalInp.style.width = "22%"; // CAMBIO: Ancho relativo para el total
+    finalInp.style.minWidth = "60px";
     dInputs.appendChild(finalInp);
 
     fragment.appendChild(dInputs);
@@ -116,7 +118,8 @@ function createInput(id, color) {
     inp.id = id;
     inp.className = 'caja-abn';
     inp.readOnly = true;
-    inp.style.cssText = `width:75px; height:60px; border:3px solid #ccc; border-radius:10px; text-align:center; font-size:1.4rem; font-weight:bold; background:white; cursor:pointer; color:${color}; transition: 0.3s;`;
+    // CAMBIO: Usamos porcentajes y min-width en lugar de 75px fijos
+    inp.style.cssText = `width:22%; min-width:55px; height:55px; border:3px solid #ccc; border-radius:10px; text-align:center; font-size:1.3rem; font-weight:bold; background:white; cursor:pointer; color:${color}; transition: 0.3s;`;
     inp.onclick = () => seleccionarCaja(id);
     return inp;
 }
@@ -124,25 +127,26 @@ function createInput(id, color) {
 function createSymbol(char) {
     const s = document.createElement('span');
     s.innerText = char;
-    s.style.cssText = "font-size:1.2rem; color:#999; font-weight:bold;";
+    s.style.cssText = "font-size:1rem; color:#999; font-weight:bold;";
     return s;
 }
 
 function createTecladoLineal() {
     const cont = document.createElement('div');
-    cont.style.cssText = "margin-top:20px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap;";
+    // CAMBIO: gap más pequeño para asegurar que entre en iPhone vertical
+    cont.style.cssText = "margin-top:20px; display:flex; gap:4px; justify-content:center; flex-wrap:wrap; width:100%;";
     
     "1234567890".split('').forEach(num => {
         const btn = document.createElement('button');
         btn.innerText = num;
         btn.className = 'btn-main';
-        btn.style.cssText = "background:#444; width:50px; height:55px; font-size:1.5rem;";
+        // CAMBIO: Reducción mínima de ancho para el teclado
+        btn.style.cssText = "background:#444; width:42px; height:50px; font-size:1.4rem; padding:0;";
         btn.onclick = () => { 
             if(inputActivoId) {
                 const el = document.getElementById(inputActivoId);
                 if(el) {
                     el.value += num;
-                    // Aviso al escribir
                     showMsg('msg-desc', 'info', `¿Has terminado? Pulsa Ok`);
                 }
             }
@@ -153,7 +157,7 @@ function createTecladoLineal() {
     const del = document.createElement('button');
     del.innerText = "⌫";
     del.className = 'btn-main';
-    del.style.cssText = "background:#E74C3C; width:65px; height:55px;";
+    del.style.cssText = "background:#E74C3C; width:55px; height:50px; padding:0;";
     del.onclick = () => { 
         if(inputActivoId) {
             const el = document.getElementById(inputActivoId);
@@ -165,7 +169,7 @@ function createTecladoLineal() {
     const ok = document.createElement('button');
     ok.innerText = "OK";
     ok.className = 'btn-main';
-    ok.style.cssText = "background:#27AE60; width:100px; height:55px;";
+    ok.style.cssText = "background:#27AE60; width:80px; height:50px; padding:0;";
     ok.onclick = validarPaso;
     cont.appendChild(ok);
 
@@ -183,7 +187,6 @@ function seleccionarCaja(id) {
     const current = document.getElementById(id);
     if (current) {
         current.style.backgroundColor = "#e3f2fd";
-        // Instrucción inicial al seleccionar
         showMsg('msg-desc', 'info', 'Escribe el número y pulsa OK');
     }
 }
@@ -232,7 +235,6 @@ function validarPaso() {
         el.style.borderColor = "#27AE60";
         el.style.backgroundColor = "#e8f5e9";
         estadoDesp[inputActivoId] = el.value;
-        // Al validar, le decimos que siga
         showMsg('msg-desc', 'ok', '¡Muy bien! Elige otra casilla.');
     } else {
         el.animate([
