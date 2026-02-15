@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaltoMates ABN - Galura y Santana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Resta-ABN - Galura y Santana</title>
     <style>
         :root {
             --centena: #f1c40f; /* Amarillo ABN */
@@ -154,6 +154,38 @@
         
         .footer { margin-top: auto; padding: 25px; color: #777; font-size: 0.85rem; text-align: center; width: 100%; border-top: 1px solid #ddd; }
         #confetti-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
+/* AJUSTES PARA MÓVILES */
+@media (max-width: 600px) {
+    /* Ajuste de botones del menú principal */
+    .tab-btn {
+        padding: 8px 5px !important;
+        font-size: 14px !important;
+        flex: 1; /* Hace que se repartan el ancho de la pantalla */
+    }
+
+    /* Reducción de las cajas de números para que no se amontonen */
+    .caja-abn, .abn-input {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 1.2rem !important;
+    }
+
+    /* El teclado numérico para que quepa en una fila o dos */
+    .btn-main {
+        width: 42px !important;
+        height: 48px !important;
+        margin: 2px !important;
+        padding: 5px !important;
+    }
+
+    /* Ajuste de las tablas para que no desborden */
+    .tabla-desc {
+        gap: 5px !important;
+        font-size: 1.2rem !important;
+        transform: scale(0.9);
+        transform-origin: center;
+    }
+}
     </style>
 </head>
 <body>
@@ -324,4 +356,5 @@
 </div>
 </body>
 </html>
+
 
