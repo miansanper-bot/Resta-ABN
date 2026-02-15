@@ -167,11 +167,13 @@
             <input type="number" id="inpSub" class="num-set" value="48">
         </div>
 
+        
         <button class="btn-main" style="background:#27AE60;" onclick="initGame()">🚀 Iniciar</button>
         <button class="btn-main" style="background:#9b59b6;" onclick="randomize()">🎲 Azar</button>
         <button class="btn-main" style="background:var(--prof); color:gold;" onclick="askProfesor()">👨‍🏫 PROFE</button>
-        
-        <label style="cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:5px;">
+        <button class="btn-main" style="background:#34495e;" onclick="abrirGuia()">📘 Guía Didáctica</button>  
+  
+       <label style="cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:5px;">
             <input type="checkbox" id="chkManual" onchange="refreshView()"> ✍️ Reto Mental
         </label>
     </div>
@@ -252,5 +254,74 @@
     <script src="rejilla.js"></script>
     <script src="descomposicion.js"></script>
 
+
+<div id="guia-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; overflow-y:auto; padding:20px;">
+    <div style="background:white; max-width:900px; margin:20px auto; padding:40px; border-radius:20px; position:relative; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2c3e50; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        
+        <button onclick="cerrarGuia()" style="position:absolute; top:20px; right:20px; font-size:30px; border:none; background:none; cursor:pointer; color: #95a5a6;">&times;</button>
+
+        <h1 style="text-align:center; color:#2980b9; margin-bottom:30px;">📘 Guía Didáctica: Resta ABN</h1>
+
+        <div id="guia-texto-content">
+            <h2 style="border-left: 5px solid #2980b9; padding-left: 15px; background: #ecf0f1;">1. Marco Teórico: El Modelo M.G.A.</h2>
+            <p>El diseño de esta aplicación se basa en el enfoque <strong>MGA (Manipulativo - Gráfico - Abstracto)</strong>. Para que un alumno interiorice conceptos complejos como la resta con llevadas, debe transitar por tres etapas cognitivas:</p>
+            
+            <div style="margin-left:20px;">
+                <p><strong>A. FASE MANIPULATIVA (Pestaña "Mesa")</strong><br>El conocimiento se adquiere a través de la acción física. En la App: El alumno manipula "bloques" digitales.<br>
+                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Conservación de la Cantidad.</strong> Al usar el martillo (🔨) para romper una decena, visualiza que la cantidad no cambia, solo su forma.</p>
+
+                <p><strong>B. FASE GRÁFICA (Pestaña "Rana")</strong><br>Representación mediante diagramas visuales. En la App: Recta Numérica.<br>
+                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Resta por Ascendencia.</strong> Entendida como "distancia": ¿Cuánto le falta al pequeño para llegar al grande?</p>
+
+                <p><strong>C. FASE ABSTRACTA (Pestaña "Rejilla")</strong><br>Uso de símbolos para describir la experiencia. En la App: Rejilla clásica ABN.<br>
+                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Algoritmo Abierto.</strong> El alumno decide cuánto quitar según su capacidad.</p>
+
+                <p><strong>D. FASE DE TRANSICIÓN SIMBÓLICA (Pestaña "Descomposición")</strong><br>Puente entre manipulación y algoritmo final. El alumno descompone minuendo y sustraendo en órdenes de magnitud.<br>
+                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Valor Posicional y Reagrupamiento.</strong> Si una columna es insuficiente, el sistema guía para reagrupar desde la fase manipulativa.</p>
+            </div>
+
+            <h2 style="border-left: 5px solid #27ae60; padding-left: 15px; background: #ecf0f1; margin-top:40px;">2. Justificación de Diseño</h2>
+            <ul>
+                <li><strong>Código de Colores:</strong> <span style="color:#f1c40f; font-weight:bold;">Amarillo (100)</span>, <span style="color:#e74c3c; font-weight:bold;">Rojo (10)</span> y <span style="color:#3498db; font-weight:bold;">Azul (1)</span>.</li>
+                <li><strong>Herramienta "Martillo":</strong> Obliga a romper físicamente la decena para evitar el error de restar el menor al mayor.</li>
+                <li><strong>Modo "Reto Mental":</strong> <em>Sin Reto</em> (Automático) y <em>Con Reto</em> (Manual/Metacognición).</li>
+            </ul>
+
+            <h2 style="border-left: 5px solid #f39c12; padding-left: 15px; background: #ecf0f1; margin-top:40px;">3. Ejemplo Práctico: 234 - 156</h2>
+            
+            <p><strong>Escenario 1: La Mesa</strong><br>1. Pasa 100 a la derecha. 2. Usa Martillo 🔨 en centena para tener 13 decenas y pasa 50. 3. Usa Martillo 🔨 en decena para tener 14 unidades y pasa 6. <strong>Resultado: 78.</strong></p>
+
+            <p><strong>Escenario 2: La Rana</strong><br>De 156 a 234: Salto +4 (160) → Salto +40 (200) → Salto +34 (234). <strong>Total: 78.</strong></p>
+
+            <p><strong>Escenario 3: La Rejilla ABN</strong></p>
+            <table style="width:100%; border-collapse:collapse; text-align:center; background:#f9f9f9;">
+                <tr style="background:#2980b9; color:white;"><th>QUITO</th><th>FALTA</th><th>QUEDA</th><th>Explicación</th></tr>
+                <tr><td>100</td><td>56</td><td>134</td><td>Centenas primero.</td></tr>
+                <tr><td>30</td><td>26</td><td>104</td><td>Decenas sueltas.</td></tr>
+                <tr><td>4</td><td>22</td><td>100</td><td>Unidades sueltas.</td></tr>
+                <tr><td>20</td><td>2</td><td>80</td><td>Amigos del 100.</td></tr>
+                <tr><td>2</td><td>0</td><td>78</td><td>Fin.</td></tr>
+            </table>
+
+            <p><strong>Escenario 4: La Resta por Descomposición</strong></p>
+            <table style="width:100%; border-collapse:collapse; text-align:center; margin-bottom:20px;">
+                <tr style="background:#7f8c8d; color:white;"><th>Posición</th><th>Minuendo (234)</th><th>Sustraendo (156)</th><th>Resultado</th></tr>
+                <tr><td>Centenas</td><td>100</td><td>100</td><td>0</td></tr>
+                <tr><td>Decenas</td><td>120</td><td>50</td><td>70</td></tr>
+                <tr><td>Unidades</td><td>14</td><td>6</td><td>8</td></tr>
+                <tr style="font-weight:bold; background:#ecf0f1;"><td>TOTAL</td><td></td><td></td><td>78</td></tr>
+            </table>
+
+            <footer style="margin-top:50px; border-top: 1px solid #bdc3c7; padding-top:20px; font-size: 0.8em; text-align:center; color:#7f8c8d;">
+                © 2026 Resta-ABN. Todos los derechos reservados. Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International.
+            </footer>
+        </div>
+
+        <div style="text-align:center; margin-top:30px;">
+            <button class="btn-main" onclick="cerrarGuia()" style="padding:10px 30px; background:#2980b9; color:white; border:none; border-radius:5px; cursor:pointer;">Cerrar Guía</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
+

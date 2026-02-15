@@ -152,4 +152,15 @@ function fireConfetti() {
     setTimeout(() => { p=[]; ctx.clearRect(0,0,canvas.width,canvas.height); }, 3000);
 }
 
+function abrirGuia() {
+    document.getElementById('guia-modal').style.display = 'block';
+    // Bloqueamos el scroll del fondo para que no se mueva la app mientras leemos
+    document.body.style.overflow = 'hidden'; 
+}
+
+function cerrarGuia() {
+    document.getElementById('guia-modal').style.display = 'none';
+    // Devolvemos el scroll
+    document.body.style.overflow = 'auto';
+}
 window.onload = randomize;
