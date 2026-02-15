@@ -1,4 +1,4 @@
-# 🐸 SaltoMates ABN: Guía Didáctica de la Resta
+# 🐸 Resta ABN: Guía Didáctica de la Resta
 
 Bienvenido a la plataforma interactiva de **SaltoMates ABN**. Este proyecto es una herramienta pedagógica diseñada para el aprendizaje de la resta posicional, eliminando la memorización mecánica y sustituyéndola por la comprensión lógica.
 
