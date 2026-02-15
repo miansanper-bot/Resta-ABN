@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Resta-ABN - Galura y Santana</title>
     <style>
         :root {
@@ -14,6 +14,12 @@
             --desp: #9b59b6;
         }
 
+        /* Bloqueo de zoom por CSS y ajuste de texto */
+        html {
+            -webkit-text-size-adjust: 100%;
+            touch-action: manipulation;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg);
@@ -23,6 +29,9 @@
             padding: 10px;
             margin: 0;
             min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+            box-sizing: border-box;
         }
 
         /* --- MENÚ Y CONTROLES --- */
@@ -37,6 +46,9 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
             justify-content: center;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
         }
 
         .num-set {
@@ -47,6 +59,7 @@
             font-size: 1.1rem;
             text-align: center;
             font-weight: bold;
+            touch-action: manipulation;
         }
 
         .btn-main {
@@ -57,32 +70,46 @@
             font-weight: bold;
             color: white;
             transition: transform 0.1s;
+            touch-action: manipulation;
         }
 
         .btn-main:active { transform: scale(0.95); }
 
         /* --- PESTAÑAS --- */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tabs { 
+            display: flex; 
+            gap: 5px; 
+            margin-bottom: 20px; 
+            width: 100%; 
+            max-width: 900px; 
+            justify-content: center;
+            flex-wrap: wrap;
+        }
         .tab {
-            padding: 12px 24px;
+            padding: 10px 15px;
             background: #ddd;
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
             transition: 0.3s;
+            font-size: 0.9rem;
+            text-align: center;
+            touch-action: manipulation;
         }
         .tab.active { background: var(--prof); color: white; }
 
         /* --- VISTAS --- */
-        .view-section { display: none; width: 100%; max-width: 1000px; }
+        .view-section { display: none; width: 100%; max-width: 1000px; box-sizing: border-box; }
         .view-section.active { display: block; }
         .panel {
             background: white;
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             border: 3px solid #eee;
             min-height: 350px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            width: 100%;
         }
 
         /* --- MESA: MATERIAL GRÁFICO --- */
@@ -91,101 +118,104 @@
             flex-wrap: wrap;
             align-content: flex-start;
             gap: 8px;
-            min-height: 220px;
+            min-height: 200px;
             border: 2px dashed #ccc;
-            padding: 15px;
+            padding: 10px;
             background: #fafafa;
             border-radius: 10px;
             margin-bottom: 15px;
+            overflow: hidden;
         }
 
         .b-100 { /* Centena */
-            width: 70px; height: 70px;
+            width: 60px; height: 60px;
             background-color: var(--centena);
             border: 2px solid #d4ac0d;
             display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: bold; cursor: pointer;
+            font-size: 13px; font-weight: bold; cursor: pointer;
             box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            touch-action: manipulation;
         }
 
         .b-10 { /* Decena */
-            width: 16px; height: 70px;
+            width: 14px; height: 60px;
             background-color: var(--decena);
             border: 2px solid #c0392b;
             cursor: pointer;
             box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            touch-action: manipulation;
         }
 
         .b-1 { /* Unidad */
-            width: 20px; height: 20px;
+            width: 18px; height: 18px;
             background-color: var(--unidad);
             border: 2px solid #1b70a0;
             border-radius: 4px; cursor: pointer;
             box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+            touch-action: manipulation;
         }
 
         /* --- REJILLA Y NUMPAD --- */
-        .abn-grid { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        .abn-grid th { background: var(--prof); color: white; padding: 12px; }
+        .abn-grid { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
+        .abn-grid th { background: var(--prof); color: white; padding: 10px; font-size: 0.9rem; }
         .abn-grid td { border: 1px solid #ccc; height: 50px; text-align: center; }
-        .abn-input { width: 85%; font-size: 1.3rem; text-align: center; border: 2px solid transparent; background: #f9f9f9; border-radius: 4px; }
+        .abn-input { width: 90%; font-size: 1.2rem; text-align: center; border: 2px solid transparent; background: #f9f9f9; border-radius: 4px; touch-action: manipulation; }
         .abn-input.active { border-color: var(--unidad); background: #fff; box-shadow: 0 0 8px rgba(45,156,219,0.3); }
 
         .numpad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 8px;
             background: #444;
-            padding: 15px;
+            padding: 10px;
             border-radius: 15px;
-            width: 200px;
+            width: 100%;
+            max-width: 200px;
             height: fit-content;
         }
         .key {
-            background: #666; color: white; border: none; padding: 15px;
+            background: #666; color: white; border: none; padding: 15px 5px;
             font-size: 1.2rem; border-radius: 8px; cursor: pointer;
+            touch-action: manipulation;
         }
         .key:active { background: #888; }
 
         /* --- MENSAJES Y PIE --- */
-        .msg-box { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin: 15px 0; display: none; }
+        .msg-box { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin: 15px 0; display: none; width: 100%; box-sizing: border-box; }
         .is-error { background: #ffdada; color: #a30000; border: 1px solid #ffbaba; }
         .is-success { background: #d4ffd4; color: #006b00; border: 1px solid #b8ebb8; }
         
-        .footer { margin-top: auto; padding: 25px; color: #777; font-size: 0.85rem; text-align: center; width: 100%; border-top: 1px solid #ddd; }
+        .footer { margin-top: auto; padding: 25px; color: #777; font-size: 0.85rem; text-align: center; width: 100%; border-top: 1px solid #ddd; box-sizing: border-box; }
         #confetti-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
-/* AJUSTES PARA MÓVILES */
-@media (max-width: 600px) {
-    /* Ajuste de botones del menú principal */
-    .tab-btn {
-        padding: 8px 5px !important;
-        font-size: 14px !important;
-        flex: 1; /* Hace que se repartan el ancho de la pantalla */
-    }
 
-    /* Reducción de las cajas de números para que no se amontonen */
-    .caja-abn, .abn-input {
-        width: 50px !important;
-        height: 50px !important;
-        font-size: 1.2rem !important;
-    }
+        /* --- MEDIA QUERIES PARA MÓVIL --- */
+        @media (max-width: 600px) {
+            .tabs { gap: 3px; }
+            .tab { padding: 8px 10px; font-size: 0.8rem; }
+            .controls { padding: 10px; gap: 8px; }
+            .btn-main { padding: 8px 12px; font-size: 0.9rem; }
+            
+            /* Ajuste de Mesa para móviles */
+            #view-0 .panel { padding: 10px; }
+            #view-0 > div { grid-template-columns: 1fr !important; gap: 10px !important; }
+            
+            /* Escalar tablas que no caben */
+            .abn-grid, .tabla-desc {
+                transform: scale(0.9);
+                transform-origin: center top;
+            }
+            
+            .numpad { max-width: 100%; grid-template-columns: repeat(6, 1fr); width: 100%; }
+            .key { padding: 10px 2px; font-size: 1rem; }
+        }
 
-    /* El teclado numérico para que quepa en una fila o dos */
-    .btn-main {
-        width: 42px !important;
-        height: 48px !important;
-        margin: 2px !important;
-        padding: 5px !important;
-    }
-
-    /* Ajuste de las tablas para que no desborden */
-    .tabla-desc {
-        gap: 5px !important;
-        font-size: 1.2rem !important;
-        transform: scale(0.9);
-        transform-origin: center;
-    }
-}
+        /* Ajustes para móvil girado (Horizontal) */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .tabs { margin-bottom: 5px; }
+            .panel { min-height: 200px; padding: 5px; }
+            .controls { padding: 5px; margin-bottom: 10px; }
+            .blocks-area { min-height: 120px; }
+        }
     </style>
 </head>
 <body>
@@ -199,7 +229,6 @@
             <input type="number" id="inpSub" class="num-set" value="48">
         </div>
 
-        
         <button class="btn-main" style="background:#27AE60;" onclick="initGame()">🚀 Iniciar</button>
         <button class="btn-main" style="background:#9b59b6;" onclick="randomize()">🎲 Azar</button>
         <button class="btn-main" style="background:var(--prof); color:gold;" onclick="askProfesor()">👨‍🏫 PROFE</button>
@@ -222,17 +251,17 @@
     </div>
 
     <div id="view-0" class="view-section active">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; width:100%;">
             <div class="panel">
-                <h3 style="color:var(--prof)">📦 TENGO: <span id="val-left">0</span></h3>
+                <h3 style="color:var(--prof); margin:5px 0;">📦 TENGO: <span id="val-left">0</span></h3>
                 <div id="zone-left" class="blocks-area"></div>
-                <div style="display:flex; gap:10px;">
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <button class="btn-main" style="background:#7f8c8d" onclick="breakBlock('c')">🔨 Romper 100</button>
                     <button class="btn-main" style="background:#7f8c8d" onclick="breakBlock('d')">🔨 Romper 10</button>
                 </div>
             </div>
             <div class="panel">
-                <h3 style="color:var(--prof)">🎯 OBJETIVO: <span id="goal-right">0</span></h3>
+                <h3 style="color:var(--prof); margin:5px 0;">🎯 OBJETIVO: <span id="goal-right">0</span></h3>
                 <div id="zone-right" class="blocks-area"></div>
                 <div id="msg-mesa" class="msg-box"></div>
             </div>
@@ -243,14 +272,14 @@
         <div class="panel">
             <svg id="svgLine" width="800" height="280" style="width:100%; background:#fff; border-radius:10px;"></svg>
             <div id="msg-frog" class="msg-box"></div>
-            <div id="frog-controls" style="display:flex; justify-content:center; align-items:center; gap:15px; margin-top:15px; min-height:80px;">
+            <div id="frog-controls" style="display:flex; justify-content:center; align-items:center; gap:15px; margin-top:15px; min-height:80px; flex-wrap:wrap;">
                 </div>
         </div>
     </div>
 
     <div id="view-2" class="view-section">
-        <div style="display:flex; gap:25px; justify-content:center; flex-wrap:wrap;">
-            <div style="flex:1; min-width:320px;">
+        <div style="display:flex; gap:25px; justify-content:center; flex-wrap:wrap; width:100%;">
+            <div style="flex:1; min-width:280px; max-width:100%;">
                 <table class="abn-grid">
                     <thead><tr><th>QUITO</th><th>FALTA</th><th>QUEDA</th></tr></thead>
                     <tbody id="abn-body"></tbody>
@@ -269,9 +298,9 @@
     </div>
 
     <div id="view-3" class="view-section">
-        <div class="panel" style="border-color: var(--desp);">
+        <div class="panel" style="border-color: var(--desp); overflow-x: auto;">
             <h3 style="color:var(--desp); text-align:center;">Resta por Descomposición ABN</h3>
-            <div id="desc-content" style="display:flex; flex-direction:column; gap:10px; align-items:center; margin-top:20px;"></div>
+            <div id="desc-content" style="display:flex; flex-direction:column; gap:10px; align-items:center; margin-top:20px; width:100%;"></div>
             <div id="msg-desc" class="msg-box"></div>
         </div>
     </div>
@@ -286,75 +315,43 @@
     <script src="rejilla.js"></script>
     <script src="descomposicion.js"></script>
 
-
-<div id="guia-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; overflow-y:auto; padding:20px;">
-    <div style="background:white; max-width:900px; margin:20px auto; padding:40px; border-radius:20px; position:relative; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2c3e50; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+<div id="guia-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; overflow-y:auto; padding:10px; box-sizing: border-box;">
+    <div style="background:white; max-width:900px; margin:10px auto; padding:20px; border-radius:20px; position:relative; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2c3e50; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; box-sizing: border-box;">
         
-        <button onclick="cerrarGuia()" style="position:absolute; top:20px; right:20px; font-size:30px; border:none; background:none; cursor:pointer; color: #95a5a6;">&times;</button>
+        <button onclick="cerrarGuia()" style="position:absolute; top:10px; right:10px; font-size:30px; border:none; background:none; cursor:pointer; color: #95a5a6;">&times;</button>
 
-        <h1 style="text-align:center; color:#2980b9; margin-bottom:30px;">📘 Guía Didáctica: Resta ABN</h1>
+        <h1 style="text-align:center; color:#2980b9; margin-bottom:20px; font-size: 1.5rem;">📘 Guía Didáctica: Resta ABN</h1>
 
-        <div id="guia-texto-content">
-            <h2 style="border-left: 5px solid #2980b9; padding-left: 15px; background: #ecf0f1;">1. Marco Teórico: El Modelo M.G.A.</h2>
+        <div id="guia-texto-content" style="font-size: 0.95rem;">
+            <h2 style="border-left: 5px solid #2980b9; padding-left: 15px; background: #ecf0f1; font-size: 1.2rem;">1. Marco Teórico: El Modelo M.G.A.</h2>
             <p>El diseño de esta aplicación se basa en el enfoque <strong>MGA (Manipulativo - Gráfico - Abstracto)</strong>. Para que un alumno interiorice conceptos complejos como la resta con llevadas, debe transitar por tres etapas cognitivas:</p>
             
-            <div style="margin-left:20px;">
-                <p><strong>A. FASE MANIPULATIVA (Pestaña "Mesa")</strong><br>El conocimiento se adquiere a través de la acción física. En la App: El alumno manipula "bloques" digitales.<br>
-                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Conservación de la Cantidad.</strong> Al usar el martillo (🔨) para romper una decena, visualiza que la cantidad no cambia, solo su forma.</p>
+            <div style="margin-left:10px;">
+                <p><strong>A. FASE MANIPULATIVA (Pestaña "Mesa")</strong><br>El alumno manipula "bloques" digitales.<br>
+                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Conservación de la Cantidad.</strong></p>
 
-                <p><strong>B. FASE GRÁFICA (Pestaña "Rana")</strong><br>Representación mediante diagramas visuales. En la App: Recta Numérica.<br>
-                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Resta por Ascendencia.</strong> Entendida como "distancia": ¿Cuánto le falta al pequeño para llegar al grande?</p>
+                <p><strong>B. FASE GRÁFICA (Pestaña "Rana")</strong><br>Representación mediante diagramas visuales.<br>
+                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Resta por Ascendencia.</strong></p>
 
-                <p><strong>C. FASE ABSTRACTA (Pestaña "Rejilla")</strong><br>Uso de símbolos para describir la experiencia. En la App: Rejilla clásica ABN.<br>
-                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Algoritmo Abierto.</strong> El alumno decide cuánto quitar según su capacidad.</p>
-
-                <p><strong>D. FASE DE TRANSICIÓN SIMBÓLICA (Pestaña "Descomposición")</strong><br>Puente entre manipulación y algoritmo final. El alumno descompone minuendo y sustraendo en órdenes de magnitud.<br>
-                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Valor Posicional y Reagrupamiento.</strong> Si una columna es insuficiente, el sistema guía para reagrupar desde la fase manipulativa.</p>
+                <p><strong>C. FASE ABSTRACTA (Pestaña "Rejilla")</strong><br>Algoritmo abierto ABN.<br>
+                <span style="color:#d35400;">🔑 Concepto Clave:</span> <strong>Algoritmo Abierto.</strong></p>
             </div>
 
-            <h2 style="border-left: 5px solid #27ae60; padding-left: 15px; background: #ecf0f1; margin-top:40px;">2. Justificación de Diseño</h2>
+            <h2 style="border-left: 5px solid #27ae60; padding-left: 15px; background: #ecf0f1; margin-top:20px; font-size: 1.2rem;">2. Justificación de Diseño</h2>
             <ul>
-                <li><strong>Código de Colores:</strong> <span style="color:#f1c40f; font-weight:bold;">Amarillo (100)</span>, <span style="color:#e74c3c; font-weight:bold;">Rojo (10)</span> y <span style="color:#3498db; font-weight:bold;">Azul (1)</span>.</li>
-                <li><strong>Herramienta "Martillo":</strong> Obliga a romper físicamente la decena para evitar el error de restar el menor al mayor.</li>
-                <li><strong>Modo "Reto Mental":</strong> <em>Sin Reto</em> (Automático) y <em>Con Reto</em> (Manual/Metacognición).</li>
+                <li><strong>Código de Colores:</strong> Amarillo (100), Rojo (10) y Azul (1).</li>
+                <li><strong>Herramienta "Martillo":</strong> Evita el error de restar el menor al mayor.</li>
             </ul>
 
-            <h2 style="border-left: 5px solid #f39c12; padding-left: 15px; background: #ecf0f1; margin-top:40px;">3. Ejemplo Práctico: 234 - 156</h2>
-            
-            <p><strong>Escenario 1: La Mesa</strong><br>1. Pasa 100 a la derecha. 2. Usa Martillo 🔨 en centena para tener 13 decenas y pasa 50. 3. Usa Martillo 🔨 en decena para tener 14 unidades y pasa 6. <strong>Resultado: 78.</strong></p>
-
-            <p><strong>Escenario 2: La Rana</strong><br>De 156 a 234: Salto +4 (160) → Salto +40 (200) → Salto +34 (234). <strong>Total: 78.</strong></p>
-
-            <p><strong>Escenario 3: La Rejilla ABN</strong></p>
-            <table style="width:100%; border-collapse:collapse; text-align:center; background:#f9f9f9;">
-                <tr style="background:#2980b9; color:white;"><th>QUITO</th><th>FALTA</th><th>QUEDA</th><th>Explicación</th></tr>
-                <tr><td>100</td><td>56</td><td>134</td><td>Centenas primero.</td></tr>
-                <tr><td>30</td><td>26</td><td>104</td><td>Decenas sueltas.</td></tr>
-                <tr><td>4</td><td>22</td><td>100</td><td>Unidades sueltas.</td></tr>
-                <tr><td>20</td><td>2</td><td>80</td><td>Amigos del 100.</td></tr>
-                <tr><td>2</td><td>0</td><td>78</td><td>Fin.</td></tr>
-            </table>
-
-            <p><strong>Escenario 4: La Resta por Descomposición</strong></p>
-            <table style="width:100%; border-collapse:collapse; text-align:center; margin-bottom:20px;">
-                <tr style="background:#7f8c8d; color:white;"><th>Posición</th><th>Minuendo (234)</th><th>Sustraendo (156)</th><th>Resultado</th></tr>
-                <tr><td>Centenas</td><td>100</td><td>100</td><td>0</td></tr>
-                <tr><td>Decenas</td><td>120</td><td>50</td><td>70</td></tr>
-                <tr><td>Unidades</td><td>14</td><td>6</td><td>8</td></tr>
-                <tr style="font-weight:bold; background:#ecf0f1;"><td>TOTAL</td><td></td><td></td><td>78</td></tr>
-            </table>
-
-            <footer style="margin-top:50px; border-top: 1px solid #bdc3c7; padding-top:20px; font-size: 0.8em; text-align:center; color:#7f8c8d;">
-                © 2026 Resta-ABN. Todos los derechos reservados. Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International.
+            <footer style="margin-top:30px; border-top: 1px solid #bdc3c7; padding-top:20px; font-size: 0.8em; text-align:center; color:#7f8c8d;">
+                © 2026 Resta-ABN. Todos los derechos reservados.
             </footer>
         </div>
 
-        <div style="text-align:center; margin-top:30px;">
-            <button class="btn-main" onclick="cerrarGuia()" style="padding:10px 30px; background:#2980b9; color:white; border:none; border-radius:5px; cursor:pointer;">Cerrar Guía</button>
+        <div style="text-align:center; margin-top:20px;">
+            <button class="btn-main" onclick="cerrarGuia()" style="padding:10px 30px; background:#2980b9; color:white;">Cerrar Guía</button>
         </div>
     </div>
 </div>
 </body>
 </html>
-
-
