@@ -45,8 +45,20 @@ function initGame() {
 }
 
 function randomize() {
-    let m = Math.floor(Math.random() * 850) + 110;
-    let s = Math.floor(Math.random() * (m - 50)) + 10;
+    // 1. Leemos el límite que has elegido en el menú (10, 20, 99 o 999)
+    const limite = parseInt(document.getElementById('selNivel').value);
+
+    // 2. Generamos el Minuendo (m)
+    // Hacemos que sea al menos la mitad del límite para que las restas sean interesantes
+    // (Ej: Si es nivel 100, buscará números entre 10 y 100, no sacará un 3)
+    let minRango = limite > 10 ? 10 : 2; 
+    let m = Math.floor(Math.random() * (limite - minRango)) + minRango;
+
+    // 3. Generamos el Sustraendo (s)
+    // Tiene que ser siempre menor que 'm' (entre 1 y m-1)
+    let s = Math.floor(Math.random() * (m - 1)) + 1;
+
+    // 4. Lo mandamos a las casillas y arrancamos
     document.getElementById('inpMin').value = m;
     document.getElementById('inpSub').value = s;
     initGame();
